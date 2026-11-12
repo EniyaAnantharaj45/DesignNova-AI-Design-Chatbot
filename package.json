@@ -1,0 +1,24 @@
+{
+  "name": "designnova-ai",
+  "version": "4.0.0",
+  "description": "DesignNova AI - All-in-One AI Design Assistant with Live Previews & Real File Exports",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": [
+    "ai-design-assistant",
+    "resume-builder",
+    "portfolio-builder",
+    "logo-designer",
+    "poster-designer",
+    "ppt-creator",
+    "code-generator",
+    "html2pdf",
+    "pptxgenjs",
+    "jszip"
+  ],
+  "author": "DesignNova Team",
+  "license": "MIT"
+}

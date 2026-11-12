@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="DesignNova AI - All-in-One AI Design Assistant. Generate resumes, portfolios, logos, posters, web UI prototypes, presentations, and code with live preview and real downloads." />
+  <meta name="theme-color" content="#080c14" />
+  <title>DesignNova AI | All-in-One AI Design Assistant</title>
+
+  <!-- Google Fonts: Plus Jakarta Sans, Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap"
+    rel="stylesheet" />
+
+  <!-- Font Awesome 6.5.1 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- Client-side Export & Generation Libraries -->
+  <!-- 1. Real PDF Export (html2pdf.js) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <!-- 2. Real PPTX Export (PptxGenJS) -->
+  <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
+  <!-- 3. Real ZIP Package Export (JSZip) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+  <!-- Favicon -->
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✨</text></svg>" />
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body class="dark-theme">
+  <!-- Dynamic Ambient Studio Lighting -->
+  <div class="ambient-glow ambient-glow-1"></div>
+  <div class="ambient-glow ambient-glow-2"></div>
+
+  <div class="app-layout">
+
+    <!-- Mobile Sidebar Backdrop Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- SIDEBAR NAVIGATION -->
+    <aside class="sidebar" id="sidebar">
+      
+      <!-- Brand Header -->
+      <div class="sidebar-header">
+        <div class="brand">
+          <div class="brand-icon">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+            <span class="brand-sparkle"><i class="fa-solid fa-sparkles"></i></span>
+          </div>
+          <div class="brand-text">
+            <div class="brand-title-row">
+              <h2>DesignNova</h2>
+              <span class="badge">All-in-One</span>
+            </div>
+            <span class="sub-badge">Creative AI Design Assistant</span>
+          </div>
+        </div>
+        <button class="sidebar-close-btn" id="closeSidebarBtn" title="Close Sidebar" aria-label="Close Sidebar">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- New Design Chat Button -->
+      <div class="new-chat-wrapper">
+        <button class="new-chat-btn" id="newChatBtn">
+          <div class="btn-icon-wrapper">
+            <i class="fa-solid fa-plus"></i>
+          </div>
+          <span>New Creative Session</span>
+          <span class="shortcut-pill">Ctrl+K</span>
+        </button>
+      </div>
+
+      <!-- Quick Feature Launch Bar -->
+      <div class="sidebar-quick-modes">
+        <span class="quick-modes-label"><i class="fa-solid fa-cubes"></i> Creative Tools</span>
+        <div class="mode-chips-grid">
+          <button class="mode-chip" data-mode="resume" title="Resume Builder"><i class="fa-solid fa-file-invoice"></i> Resume</button>
+          <button class="mode-chip" data-mode="portfolio" title="Portfolio Builder"><i class="fa-solid fa-globe"></i> Portfolio</button>
+          <button class="mode-chip" data-mode="logo" title="Logo Designer"><i class="fa-solid fa-icons"></i> Logo</button>
+          <button class="mode-chip" data-mode="poster" title="Poster & Banner"><i class="fa-solid fa-image"></i> Poster</button>
+          <button class="mode-chip" data-mode="website" title="Website & UI/UX"><i class="fa-solid fa-laptop-code"></i> Web UI</button>
+          <button class="mode-chip" data-mode="presentation" title="PPT Creator"><i class="fa-solid fa-file-powerpoint"></i> PPT</button>
+        </div>
+      </div>
+
+      <!-- Search Design History -->
+      <div class="sidebar-search-box">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" id="chatSearchInput" placeholder="Search sessions & designs..." autocomplete="off" />
+        <button class="search-clear-btn" id="searchClearBtn" title="Clear search" style="display: none;">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Recent Design Sessions List -->
+      <div class="sidebar-section">
+        <div class="section-label">
+          <span><i class="fa-solid fa-layer-group"></i> Design History</span>
+          <span class="count-badge" id="chatCountBadge">3</span>
+        </div>
+        <ul class="chat-history-list" id="chatHistoryList">
+          <!-- Dynamically rendered by script.js -->
+        </ul>
+      </div>
+
+      <!-- Sidebar Utilities & Profile -->
+      <div class="sidebar-footer">
+        <div class="footer-actions-grid">
+          <button class="footer-btn" id="exportChatBtn" title="Export session conversation as Markdown">
+            <i class="fa-solid fa-file-arrow-down"></i>
+            <span>Export Chat</span>
+          </button>
+          <button class="footer-btn" id="clearAllBtn" title="Clear all design sessions">
+            <i class="fa-solid fa-trash-arrow-up"></i>
+            <span>Clear All</span>
+          </button>
+        </div>
+
+        <!-- Dark/Light Theme Switcher -->
+        <button class="footer-btn theme-toggle-btn" id="themeToggleBtn" title="Switch between Dark & Light Studio Themes">
+          <div class="theme-icon-box">
+            <i class="fa-solid fa-sun" id="themeIcon"></i>
+          </div>
+          <span id="themeText">Light Studio</span>
+          <span class="theme-badge" id="themeBadge">Dark Active</span>
+        </button>
+
+        <!-- User / Designer Profile Card -->
+        <div class="user-card" id="userCard">
+          <div class="user-avatar">
+            <i class="fa-solid fa-palette"></i>
+            <span class="online-indicator"></span>
+          </div>
+          <div class="user-details">
+            <span class="user-name">Creative Creator</span>
+            <span class="user-status"><i class="fa-solid fa-circle"></i> DesignNova Pro Studio</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN CHAT CONTAINER -->
+    <main class="main-content">
+
+      <!-- Top Navigation Bar -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="menu-toggle-btn" id="toggleSidebarBtn" title="Toggle Sidebar" aria-label="Toggle Sidebar">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+
+          <!-- Active AI Design Engine Badge -->
+          <div class="chat-model-selector" id="modelSelectorBadge" title="All-in-One AI Design Intelligence Engine">
+            <div class="spark-pulse">
+              <i class="fa-solid fa-wand-magic-sparkles spark-icon"></i>
+            </div>
+            <div class="model-info-text">
+              <span class="model-name">DesignNova All-in-One v4.0</span>
+              <span class="model-tag">Resumes • Portfolios • Logos • UI • PPT • Posters</span>
+            </div>
+            <span class="status-indicator" title="Design Engine: Active"></span>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <!-- Voice Output Toggle -->
+          <button class="topbar-icon-btn" id="speechToggleBtn" title="Toggle AI Voice Output" aria-label="Voice Output">
+            <i class="fa-solid fa-volume-high" id="speechIcon"></i>
+          </button>
+
+          <!-- New Design Quick Button -->
+          <button class="topbar-icon-btn" id="topbarNewChat" title="Start Fresh Creative Session" aria-label="Start New Session">
+            <i class="fa-regular fa-pen-to-square"></i>
+          </button>
+
+          <!-- Studio Info & Documentation Modal Button -->
+          <button class="topbar-icon-btn highlight-btn" id="infoBtn" title="About DesignNova AI & System Documentation" aria-label="About DesignNova AI">
+            <i class="fa-solid fa-circle-info"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- Chat Viewport (Scrollable Workspace) -->
+      <div class="chat-viewport" id="chatViewport">
+
+        <!-- Welcome Screen (Visible on fresh/empty session) -->
+        <section class="welcome-screen" id="welcomeScreen">
+          <div class="welcome-header">
+            <div class="ai-avatar-large">
+              <div class="avatar-orbit orbit-1"></div>
+              <div class="avatar-orbit orbit-2"></div>
+              <i class="fa-solid fa-wand-magic-sparkles"></i>
+              <div class="pulse-ring"></div>
+            </div>
+
+            <div class="welcome-pill">
+              <i class="fa-solid fa-sparkles"></i> All-in-One AI Design Assistant
+            </div>
+
+            <h1 class="welcome-title">What would you like to create today?</h1>
+            <p class="welcome-subtitle">
+              Ask in natural language. DesignNova generates real resumes, interactive portfolios, vector logos, event posters, website prototypes, slide presentations, and production code.
+            </p>
+
+            <!-- Creative Capability Pills (8 Core Features) -->
+            <div class="feature-pills">
+              <span class="feature-pill"><i class="fa-solid fa-file-invoice"></i> Resume Builder</span>
+              <span class="feature-pill"><i class="fa-solid fa-globe"></i> Portfolio Builder</span>
+              <span class="feature-pill"><i class="fa-solid fa-icons"></i> Logo Designer</span>
+              <span class="feature-pill"><i class="fa-solid fa-image"></i> Posters & Banners</span>
+              <span class="feature-pill"><i class="fa-solid fa-laptop-code"></i> Website & UI/UX</span>
+              <span class="feature-pill"><i class="fa-solid fa-file-powerpoint"></i> PPT Creator</span>
+              <span class="feature-pill"><i class="fa-solid fa-code"></i> Code Generator</span>
+              <span class="feature-pill"><i class="fa-solid fa-comments"></i> AI Design Chat</span>
+            </div>
+          </div>
+
+          <!-- Prompt Suggestions Grid (Covers all 8 capabilities) -->
+          <div class="suggestions-grid">
+
+            <!-- 1. Resume Builder -->
+            <button class="suggestion-card" data-prompt="Create a professional resume for a Senior Frontend Developer named Alex Rivera with skills in React, TypeScript, and UI Design.">
+              <div class="card-icon" style="--accent: #6366f1;">
+                <i class="fa-solid fa-file-invoice"></i>
+              </div>
+              <div class="card-content">
+                <div class="card-category">AI Resume Builder</div>
+                <h3>Developer & Designer Resume</h3>
+                <p>Generate styled resume preview with editable fields, 4 templates, and PDF download.</p>
+              </div>
+              <div class="card-arrow-wrap">
+                <i class="fa-solid fa-arrow-up-right card-arrow"></i>
+              </div>
+            </button>
+
+            <!-- 2. Portfolio Builder -->
+            <button class="suggestion-card" data-prompt="Build a modern personal portfolio website for Maya Lin, UI/UX Designer, showcasing 3 projects and contact info.">
+              <div class="card-icon" style="--accent: #06b6d4;">
+                <i class="fa-solid fa-globe"></i>
+              </div>
+              <div class="card-content">
+                <div class="card-category">AI Portfolio Builder</div>
+                <h3>Responsive Portfolio Website</h3>
+                <p>Generates interactive portfolio with live responsive preview and downloadable ZIP files.</p>
+              </div>
+              <div class="card-arrow-wrap">
+                <i class="fa-solid fa-arrow-up-right card-arrow"></i>
+              </div>
+            </button>
+
+            <!-- 3. Logo Designer -->
+            <button class="suggestion-card" data-prompt="Design a vector logo for an artisanal coffee roastery named BeanCraft in warm amber and espresso brown.">
+              <div class="card-icon" style="--accent: #f59e0b;">
+                <i class="fa-solid fa-icons"></i>
+              </div>
+              <div class="card-content">
+                <div class="card-category">AI Logo Designer</div>
+                <h3>Brand Identity & Logo</h3>
+                <p>Generates vector geometric emblems, typography styles, and high-res SVG / PNG export.</p>
+              </div>
+              <div class="card-arrow-wrap">
+                <i class="fa-solid fa-arrow-up-right card-arrow"></i>
+              </div>
+            </button>
+
+            <!-- 4. Poster & Banner Designer -->
+            <button class="suggestion-card" data-prompt="Design an event poster for Global Tech Summit 2026 on October 24th in San Francisco with neon violet and cyan accents.">
+              <div class="card-icon" style="--accent: #ec4899;">
+                <i class="fa-solid fa-image"></i>
+              </div>
+              <div class="card-content">
+                <div class="card-category">Poster & Banner Designer</div>
+                <h3>Event Poster & Social Banner</h3>
+                <p>High-impact artwork with custom aspect ratios, typography, and PNG / PDF export.</p>
+              </div>
+              <div class="card-arrow-wrap">
+                <i class="fa-solid fa-arrow-up-right card-arrow"></i>
+              </div>
+            </button>
+
+            <!-- 5. Website & UI/UX Designer -->
+            <button class="suggestion-card" data-prompt="Design a modern SaaS landing page hero section with glassmorphism, gradient headline, and responsive CTA buttons.">
+              <div class="card-icon" style="--accent: #8b5cf6;">
+                <i class="fa-solid fa-laptop-code"></i>
+              </div>
+              <div class="card-content">
+                <div class="card-category">Website & UI/UX Designer</div>
+                <h3>Landing Page UI Prototype</h3>
+                <p>Interactive web prototypes with responsive viewports, live sandbox preview, and code export.</p>
+              </div>
+              <div class="card-arrow-wrap">
+                <i class="fa-solid fa-arrow-up-right card-arrow"></i>
+              </div>
+            </button>
+
+            <!-- 6. PPT & Presentation Creator -->
+            <button class="suggestion-card" data-prompt="Create a 5-slide presentation on The Future of AI in Healthcare with executive summary, market trends, and key takeaways.">
+              <div class="card-icon" style="--accent: #10b981;">
+                <i class="fa-solid fa-file-powerpoint"></i>
+              </div>
+              <div class="card-content">
+                <div class="card-category">PPT & Document Creator</div>
+                <h3>Slide Deck Presentation</h3>
+                <p>Structured slide carousel preview with instant Microsoft PowerPoint (.pptx) download.</p>
+              </div>
+              <div class="card-arrow-wrap">
+                <i class="fa-solid fa-arrow-up-right card-arrow"></i>
+              </div>
+            </button>
+
+          </div>
+        </section>
+
+        <!-- Dynamic Message Container -->
+        <div class="messages-container" id="messagesContainer">
+          <!-- Injected dynamically by script.js -->
+        </div>
+
+        <!-- Typing Indicator Bubble -->
+        <div class="typing-indicator-wrapper" id="typingIndicator" style="display: none;">
+          <div class="message-row ai-row">
+            <div class="avatar ai-avatar">
+              <i class="fa-solid fa-wand-magic-sparkles"></i>
+            </div>
+            <div class="typing-bubble-container">
+              <div class="typing-bubble">
+                <span class="typing-dot"></span>
+                <span class="typing-dot"></span>
+                <span class="typing-dot"></span>
+              </div>
+              <span class="typing-status-text">DesignNova is crafting your design output...</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scroll Anchor -->
+        <div id="scrollAnchor"></div>
+      </div>
+
+      <!-- BOTTOM INPUT & ACTION AREA -->
+      <footer class="chat-input-area">
+        <div class="input-container-wrapper">
+
+          <!-- Quick Design Action Chips -->
+          <div class="quick-action-bar" id="quickActionBar">
+            <button class="quick-chip" data-prompt="Create a modern software engineer resume">
+              <i class="fa-solid fa-file-invoice"></i> Build Resume
+            </button>
+            <button class="quick-chip" data-prompt="Build a personal portfolio website for a developer">
+              <i class="fa-solid fa-globe"></i> Build Portfolio
+            </button>
+            <button class="quick-chip" data-prompt="Design a modern tech startup logo named PulseAI">
+              <i class="fa-solid fa-icons"></i> Design Logo
+            </button>
+            <button class="quick-chip" data-prompt="Create an event poster for a music festival">
+              <i class="fa-solid fa-image"></i> Design Poster
+            </button>
+            <button class="quick-chip" data-prompt="Create a 5-slide presentation on AI Innovation">
+              <i class="fa-solid fa-file-powerpoint"></i> Create PPT
+            </button>
+            <button class="quick-chip" data-prompt="Design a responsive SaaS landing page hero section">
+              <i class="fa-solid fa-laptop-code"></i> Design Web UI
+            </button>
+          </div>
+
+          <!-- Staged Design File Attachment Preview -->
+          <div class="attached-file-preview" id="attachedFilePreview" style="display: none;">
+            <div class="file-chip">
+              <i class="fa-solid fa-paperclip"></i>
+              <span class="file-chip-name" id="attachedFileName">asset.png</span>
+              <span class="file-chip-size" id="attachedFileSize">(240 KB)</span>
+              <button class="remove-file-btn" id="removeFileBtn" title="Remove attachment">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Main Input Floating Box -->
+          <div class="input-box" id="inputBox">
+            <button class="input-action-btn attach-btn" id="attachBtn" title="Attach file or mockup" aria-label="Attach File">
+              <i class="fa-solid fa-paperclip"></i>
+            </button>
+            <input type="file" id="fileInput" style="display: none;" accept=".html,.css,.js,.json,.png,.jpg,.jpeg,.svg,.pdf,.txt,.docx" />
+
+            <textarea id="messageInput" rows="1"
+              placeholder="Ask DesignNova anything (e.g. 'Build a resume', 'Design a logo for BeanCraft', 'Create a 5-slide PPT on AI', 'Make a portfolio website')..."
+              autocomplete="off"></textarea>
+
+            <div class="input-actions-right">
+              <button class="input-action-btn mic-btn" id="micBtn" title="Voice Input (Speech to Text)" aria-label="Voice Input">
+                <i class="fa-solid fa-microphone"></i>
+              </button>
+
+              <button class="send-btn" id="sendBtn" disabled title="Send request (Enter)" aria-label="Send Prompt">
+                <i class="fa-solid fa-arrow-up"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Input Footer Disclaimer -->
+          <div class="input-disclaimer">
+            <div class="disclaimer-left">
+              <span>DesignNova AI • All-in-One Design Assistant with Real Previews & Downloads</span>
+            </div>
+            <div class="disclaimer-right">
+              <span>Press <kbd>Enter</kbd> to generate • <kbd>Shift + Enter</kbd> for new line</span>
+            </div>
+          </div>
+
+        </div>
+      </footer>
+
+    </main>
+  </div>
+
+  <!-- ALL-IN-ONE STUDIO INTERACTIVE PREVIEW & EDIT MODAL -->
+  <div class="modal-backdrop studio-modal-backdrop" id="studioPreviewModal">
+    <div class="modal-card studio-modal-card">
+      <div class="modal-header studio-modal-header">
+        <div class="modal-title-wrap">
+          <div class="modal-title-icon" id="studioModalIcon">
+            <i class="fa-solid fa-cube"></i>
+          </div>
+          <div>
+            <h3 id="studioModalTitle">Design Preview</h3>
+            <span class="modal-subtitle" id="studioModalSubtitle">Live Interactive Prototype</span>
+          </div>
+        </div>
+
+        <!-- Viewport Device Switchers (for Websites & Portfolios) -->
+        <div class="device-viewport-toggles" id="deviceViewportToggles" style="display: none;">
+          <button class="device-toggle-btn active" data-viewport="desktop" title="Desktop View (100%)">
+            <i class="fa-solid fa-desktop"></i> <span>Desktop</span>
+          </button>
+          <button class="device-toggle-btn" data-viewport="tablet" title="Tablet View (768px)">
+            <i class="fa-solid fa-tablet-screen-button"></i> <span>Tablet</span>
+          </button>
+          <button class="device-toggle-btn" data-viewport="mobile" title="Mobile View (375px)">
+            <i class="fa-solid fa-mobile-screen-button"></i> <span>Mobile</span>
+          </button>
+        </div>
+
+        <!-- Studio Modal Actions -->
+        <div class="studio-modal-actions">
+          <button class="studio-header-btn" id="studioEditBtn" title="Edit Content & Properties">
+            <i class="fa-solid fa-pen-to-square"></i> <span>Edit</span>
+          </button>
+          <button class="studio-header-btn highlight-action" id="studioDownloadBtn" title="Download Export File">
+            <i class="fa-solid fa-download"></i> <span id="studioDownloadBtnText">Download</span>
+          </button>
+          <button class="modal-close-btn" id="closeStudioModalBtn" title="Close Preview">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Studio Modal Body -->
+      <div class="studio-modal-body">
+        <!-- Interactive Viewport Arena -->
+        <div class="studio-viewport-arena" id="studioViewportArena">
+          <!-- Dynamically populated iframe / canvas / resume paper / presentation slides -->
+        </div>
+
+        <!-- Slide-Out Edit Drawer -->
+        <aside class="studio-edit-drawer" id="studioEditDrawer" style="display: none;">
+          <div class="edit-drawer-header">
+            <h4><i class="fa-solid fa-sliders"></i> Customize Design</h4>
+            <button class="drawer-close-btn" id="closeEditDrawerBtn"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+          <div class="edit-drawer-body" id="studioEditDrawerBody">
+            <!-- Dynamically populated form controls -->
+          </div>
+        </aside>
+      </div>
+
+      <div class="studio-modal-footer">
+        <div class="footer-left-info" id="studioModalFooterInfo">
+          <span>DesignNova Real-Time Generation Engine • Client-Side Native Export</span>
+        </div>
+        <div class="footer-right-actions" id="studioModalFooterActions">
+          <!-- Dynamic extra actions (e.g. template chips, format dropdowns) -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DesignNova Studio Documentation & Architecture Modal -->
+  <div class="modal-backdrop" id="infoModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <div class="modal-title-icon">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+          </div>
+          <div>
+            <h3>DesignNova AI All-in-One Studio</h3>
+            <span class="modal-subtitle">Architecture & Creative Generation Capabilities</span>
+          </div>
+        </div>
+        <button class="modal-close-btn" id="closeInfoModalBtn" title="Close modal" aria-label="Close modal">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Modal Tabs -->
+      <div class="modal-tabs">
+        <button class="modal-tab active" data-tab="tab-overview">Overview</button>
+        <button class="modal-tab" data-tab="tab-features">8 Core Superpowers</button>
+        <button class="modal-tab" data-tab="tab-tech">Tech Stack & Export</button>
+        <button class="modal-tab" data-tab="tab-viva">API & Backend Setup</button>
+      </div>
+
+      <div class="modal-body">
+        
+        <!-- Tab 1: Overview -->
+        <div class="tab-pane active" id="tab-overview">
+          <div class="project-brief">
+            <p><strong>System:</strong> DesignNova AI All-in-One Design Assistant</p>
+            <p>DesignNova AI is a unified creative platform. Instead of merely outputting plain descriptive text, it understands user intentions and produces <strong>actual interactive outputs</strong> (resumes, portfolios, logos, posters, web prototypes, slides, and code) with live previews and real downloads (PDF, PPTX, PNG, SVG, ZIP, and HTML).</p>
+          </div>
+          <div class="metric-grid">
+            <div class="metric-card">
+              <span class="metric-number">8 in 1</span>
+              <span class="metric-label">Creative Superpowers</span>
+            </div>
+            <div class="metric-card">
+              <span class="metric-number">Real Files</span>
+              <span class="metric-label">PDF, PPTX, SVG, PNG, ZIP</span>
+            </div>
+            <div class="metric-card">
+              <span class="metric-number">Live Sandboxes</span>
+              <span class="metric-label">Interactive Previews</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 2: 8 Core Superpowers -->
+        <div class="tab-pane" id="tab-features">
+          <ul class="feature-checklist">
+            <li><i class="fa-solid fa-circle-check"></i> <strong>AI Resume Builder:</strong> Collects user credentials, generates professional resume previews, supports 4 templates, and enables instant PDF download.</li>
+            <li><i class="fa-solid fa-circle-check"></i> <strong>AI Portfolio Builder:</strong> Generates multi-section responsive portfolio websites with live device sandboxes and ZIP bundle downloads.</li>
+            <li><i class="fa-solid fa-circle-check"></i> <strong>AI Logo Designer:</strong> Generates vector geometric and typography logos with SVG and 1200x1200px PNG exports.</li>
+            <li><i class="fa-solid fa-circle-check"></i> <strong>Poster, Banner & Invite Designer:</strong> Creates event artwork with custom aspect ratios, rich typography, and PNG/PDF export.</li>
+            <li><i class="fa-solid fa-circle-check"></i> <strong>Website & UI/UX Designer:</strong> Generates interactive HTML/CSS/JS landing pages and prototypes with desktop/tablet/mobile toggles.</li>
+            <li><i class="fa-solid fa-circle-check"></i> <strong>PPT & Document Creator:</strong> Formats multi-slide decks with slide carousels and native Microsoft PowerPoint (.pptx) download.</li>
+            <li><i class="fa-solid fa-circle-check"></i> <strong>Code Generator & Sandbox:</strong> Generates HTML, CSS, JS, Python, and Java with one-click copy and live web execution.</li>
+            <li><i class="fa-solid fa-circle-check"></i> <strong>General AI Chat:</strong> Answers design questions, performs UX audits, and recommends color and typography systems.</li>
+          </ul>
+        </div>
+
+        <!-- Tab 3: Tech Stack & Libraries -->
+        <div class="tab-pane" id="tab-tech">
+          <div class="tech-table">
+            <div class="tech-row">
+              <span class="tech-badge js-badge"><i class="fa-solid fa-file-pdf"></i> html2pdf.js</span>
+              <span>Client-side HTML5 canvas rendering to high-resolution print-ready PDF documents for resumes and posters.</span>
+            </div>
+            <div class="tech-row">
+              <span class="tech-badge js-badge"><i class="fa-solid fa-file-powerpoint"></i> PptxGenJS</span>
+              <span>Generates real, editable Microsoft PowerPoint presentations (.pptx) directly in the browser with custom slide layouts.</span>
+            </div>
+            <div class="tech-row">
+              <span class="tech-badge js-badge"><i class="fa-solid fa-file-zipper"></i> JSZip</span>
+              <span>Packages complete multi-file web portfolios (index.html, style.css, script.js) into compressed .zip archives for download.</span>
+            </div>
+            <div class="tech-row">
+              <span class="tech-badge css-badge"><i class="fa-brands fa-css3-alt"></i> Modern CSS3 & Canvas</span>
+              <span>High-DPI HTML5 Canvas rasterization for logos and posters, CSS custom properties, and responsive viewports.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 4: API & Backend Configuration -->
+        <div class="tab-pane" id="tab-viva">
+          <div class="viva-qa">
+            <div class="qa-item">
+              <span class="q">Q: How do I configure my own AI API key?</span>
+              <span class="a">A: Copy <code>.env.example</code> to <code>.env</code> in the project folder and paste your key (e.g. <code>OPENAI_API_KEY=sk-...</code> or <code>GEMINI_API_KEY=...</code>). The Node backend automatically loads it securely via <code>process.env</code> without exposing it to the browser.</span>
+            </div>
+            <div class="qa-item">
+              <span class="q">Q: Does DesignNova AI work without an API key?</span>
+              <span class="a">A: Yes! DesignNova includes a comprehensive built-in generation engine for all 8 tools, so resumes, portfolios, logos, posters, prototypes, slides, and code generate immediately with zero setup.</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button class="modal-action-btn" id="confirmModalBtn">Back to Design Studio</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Clear All Confirmation Modal -->
+  <div class="modal-backdrop" id="confirmClearModal">
+    <div class="modal-card small-modal">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <div class="modal-title-icon warning-icon">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+          </div>
+          <div>
+            <h3>Clear All Design Sessions?</h3>
+            <span class="modal-subtitle">This action will remove all saved design sessions.</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete all saved design sessions from your browser storage? This cannot be undone.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-secondary-btn" id="cancelClearBtn">Cancel</button>
+        <button class="modal-danger-btn" id="proceedClearBtn">Yes, Clear All</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Application Logic -->
+  <script src="script.js"></script>
+</body>
+
+</html>
